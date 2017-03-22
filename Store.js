@@ -6,12 +6,12 @@ class Store extends Observable {
 
     super();
 
-    this.list = this.restoreHotReload();
+    this.notesList = [];
   }
 
   get counter() {
 
-    return this.list.length;
+    return this.notesList.length;
   }
 
   update(delta) {
@@ -21,49 +21,19 @@ class Store extends Observable {
     this.notify(delta);
   }
 
-  incCounter(inc = 1) {
+  addNewNote(newNote) {
 
-    const c = Math.max(0, this.counter + inc * 11);
-    const gen = () => c < 1 ? [] : Array.apply(null, Array(c)).map((e, i)=>
-      ({ id:i, name:'' + ( i + 1) }));
-    const result = gen();
-
-    result.forEach(e => (e.children = gen()));
-
-    this.update({ list:result });
-  }
-
- createNote () {
-    var text = document.getElementById("newtodo").value;
-    var div = document.createElement('div');
-    var textNote = document.createTextNode(text);
-    div.appendChild(textNote);
-
-    document.getElementById("newtodo").value = "";
-
-    var notesArea = document.getElementById("notesArea");
-    notesArea.appendChild(div);
-    var deleter = document.createElement('span');
-    deleter.onclick = function() {
-      notesArea.removeChild(div);
+    if (newNote) {
+      this.notesList.push(newNote);
     }
-    var deltext = document.createTextNode(' x');
-    deleter.appendChild(deltext);
-    div.appendChild(deleter);
-
+    this.update( this.notesList );
   }
 
-  deleteNote () {
-    var area = document.getElementById("notesArea");
-    var div = area.getElementsByTagName('div');
-    var divlength = div.length;
-    for (var i = 0; i < divlength; i++) {
-      var element = area.children[0];
-      area.removeChild(element);
-    }
+  delAllNotes() {
 
+    this.notesList = [];
+    this.update( this.notesList );
   }
-
 
   restoreHotReload() {
     const hot = module && module.hot;
